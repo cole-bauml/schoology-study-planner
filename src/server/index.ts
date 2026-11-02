@@ -15,5 +15,7 @@ if (!process.env.APP_ENCRYPTION_KEY || !process.env.SESSION_SECRET) {
 await mongoose.connect(mongoUri);
 const app = createApp();
 app.listen(port, () => {
-  console.log(`Dublin Study Planner API listening on http://localhost:${port}`);
+  console.log(
+    `Schoology Study Planner API listening on http://localhost:${port}`,
+  );
 });

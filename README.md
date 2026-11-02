@@ -9,7 +9,7 @@ API to identify dated work, syllabus information, and estimated effort.
 
 - Node.js 20+
 - MongoDB
-- Schoology API consumer key and secret from [Schoology's API page](https://dublin.schoology.com/api)
+- Schoology API consumer key and secret from [Schoology's API page](https://Schoology.schoology.com/api)
 - An OpenAI API key for course-material analysis
 
 ## Run locally

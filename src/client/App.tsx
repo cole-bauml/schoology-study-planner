@@ -17,7 +17,7 @@ import {
   RefreshCw,
   Settings2,
   ShieldCheck,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 import {
   useCallback,
@@ -25,7 +25,7 @@ import {
   useMemo,
   useState,
   type FormEvent,
-  type ReactNode
+  type ReactNode,
 } from "react";
 import { apiRequest } from "./api.js";
 import type {
@@ -33,7 +33,7 @@ import type {
   ChecklistItem,
   Course,
   DashboardData,
-  SyncProgress
+  SyncProgress,
 } from "./types.js";
 
 type AppMode = "loading" | "setup" | "login" | "app";
@@ -49,7 +49,7 @@ function App() {
   const [activeView, setActiveView] = useState<ViewName>("overview");
   const [dashboard, setDashboard] = useState<DashboardData>({
     syncedAt: null,
-    courses: []
+    courses: [],
   });
   const [syncing, setSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState<SyncProgress | null>(null);
@@ -94,7 +94,7 @@ function App() {
   const handleUnlock = async (password: string) => {
     await apiRequest("/api/auth/login", {
       method: "POST",
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ password }),
     });
     setError("");
     setMode("app");
@@ -109,7 +109,7 @@ function App() {
   }) => {
     await apiRequest("/api/setup", {
       method: "POST",
-      body: JSON.stringify(values)
+      body: JSON.stringify(values),
     });
     setError("");
     setMode("app");
@@ -122,7 +122,7 @@ function App() {
       active: true,
       stage: "schoology",
       message: "Starting Schoology sync",
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
     setError("");
     let pollActive = true;
@@ -137,7 +137,7 @@ function App() {
     const pollTimer = window.setInterval(() => void pollProgress(), 1000);
     try {
       const data = await apiRequest<DashboardData>("/api/sync", {
-        method: "POST"
+        method: "POST",
       });
       setDashboard(data);
     } catch (syncError) {
@@ -153,7 +153,7 @@ function App() {
   const handleToggle = async (
     courseId: string,
     itemId: string,
-    completed: boolean
+    completed: boolean,
   ) => {
     const previous = dashboard;
     setDashboard((current) => ({
@@ -163,17 +163,20 @@ function App() {
           ? {
               ...course,
               checklist: course.checklist.map((item) =>
-                item.id === itemId ? { ...item, completed } : item
-              )
+                item.id === itemId ? { ...item, completed } : item,
+              ),
             }
-          : course
-      )
+          : course,
+      ),
     }));
     try {
-      await apiRequest(`/api/courses/${encodeURIComponent(courseId)}/checklist/${encodeURIComponent(itemId)}`, {
-        method: "PATCH",
-        body: JSON.stringify({ completed })
-      });
+      await apiRequest(
+        `/api/courses/${encodeURIComponent(courseId)}/checklist/${encodeURIComponent(itemId)}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ completed }),
+        },
+      );
     } catch (toggleError) {
       setDashboard(previous);
       setError(errorMessage(toggleError));
@@ -300,7 +303,7 @@ function App() {
 
 function SetupScreen({
   error,
-  onSubmit
+  onSubmit,
 }: {
   error: string;
   onSubmit: (values: {
@@ -316,7 +319,7 @@ function SetupScreen({
     schoologyKey: "",
     schoologySecret: "",
     openAiKey: "",
-    appPassword: ""
+    appPassword: "",
   });
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -329,20 +332,22 @@ function SetupScreen({
     <div className="gate-screen">
       <div className="gate-aside">
         <div className="brand brand-light">
-          <div className="brand-mark"><GraduationCap size={21} /></div>
-          <span>Dublin Planner</span>
+          <div className="brand-mark">
+            <GraduationCap size={21} />
+          </div>
+          <span>Schoology Planner</span>
         </div>
         <div className="gate-aside-copy">
-          <span className="eyebrow eyebrow-light">A little more focus</span>
-          <h1>Make room for the work that matters.</h1>
+          <span className="eyebrow eyebrow-light">SCHOOLWORK PLANNER</span>
+          <h1>Schoology assignments, in one checklist.</h1>
           <p>
-            Your Schoology courses, upcoming deadlines, and a calmer plan for
-            getting it all done.
+            Find assignments and due dates across your courses, including dates
+            mentioned in course materials.
           </p>
         </div>
         <div className="aside-note">
           <ShieldCheck size={17} />
-          <span>Your keys stay encrypted on your server.</span>
+          <span>Your credentials are encrypted before they’re saved.</span>
         </div>
         <div className="gate-decoration gate-decoration-one" />
         <div className="gate-decoration gate-decoration-two" />
@@ -350,14 +355,16 @@ function SetupScreen({
       <section className="gate-form-wrap">
         <div className="gate-form">
           <div className="mobile-brand brand">
-            <div className="brand-mark"><GraduationCap size={21} /></div>
-            <span>Dublin Planner</span>
+            <div className="brand-mark">
+              <GraduationCap size={21} />
+            </div>
+            <span>Schoology Planner</span>
           </div>
           <span className="eyebrow">FIRST-TIME SETUP</span>
-          <h2>Connect your study space</h2>
+          <h2>Connect Schoology</h2>
           <p className="form-intro">
-            Add your Schoology API credentials and create a password for this
-            private planner.
+            Enter your Schoology API keys, an OpenAI API key for course
+            analysis, and a password for this app.
           </p>
           {error && <FormError>{error}</FormError>}
           <form onSubmit={submit}>
@@ -375,7 +382,9 @@ function SetupScreen({
               />
             </div>
             <div className="field-group">
-              <label htmlFor="schoology-secret">Schoology consumer secret</label>
+              <label htmlFor="schoology-secret">
+                Schoology consumer secret
+              </label>
               <input
                 id="schoology-secret"
                 type="password"
@@ -389,7 +398,7 @@ function SetupScreen({
               />
               <a
                 className="field-hint field-link"
-                href="https://dublin.schoology.com/api"
+                href="https://Schoology.schoology.com/api"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -410,7 +419,7 @@ function SetupScreen({
                 placeholder="Used to find syllabus dates and estimate effort"
               />
               <span className="field-hint">
-                Used only for course analysis; encrypted at rest.
+                Used to analyze course materials; encrypted before saving.
               </span>
             </div>
             <div className="field-group">
@@ -438,16 +447,23 @@ function SetupScreen({
                 </button>
               </div>
               <span className="field-hint">
-                You’ll only need to enter it once on this browser.
+                This browser stays signed in for 180 days.
               </span>
             </div>
-            <button className="button button-primary button-wide" disabled={busy}>
-              {busy ? <LoaderCircle className="spin" size={17} /> : <ArrowRight size={17} />}
+            <button
+              className="button button-primary button-wide"
+              disabled={busy}
+            >
+              {busy ? (
+                <LoaderCircle className="spin" size={17} />
+              ) : (
+                <ArrowRight size={17} />
+              )}
               {busy ? "Setting up…" : "Create my planner"}
             </button>
           </form>
           <p className="privacy-note">
-            <ShieldCheck size={14} /> Your app password is securely hashed.
+            <ShieldCheck size={14} /> Your password is stored as a secure hash.
           </p>
         </div>
       </section>
@@ -457,7 +473,7 @@ function SetupScreen({
 
 function LoginScreen({
   error,
-  onSubmit
+  onSubmit,
 }: {
   error: string;
   onSubmit: (password: string) => Promise<void>;
@@ -474,13 +490,17 @@ function LoginScreen({
     <div className="login-screen">
       <div className="login-card">
         <div className="brand login-brand">
-          <div className="brand-mark"><GraduationCap size={21} /></div>
-          <span>Dublin Planner</span>
+          <div className="brand-mark">
+            <GraduationCap size={21} />
+          </div>
+          <span>Schoology Planner</span>
         </div>
-        <div className="login-lock"><ShieldCheck size={24} /></div>
-        <span className="eyebrow">YOUR PRIVATE WORKSPACE</span>
-        <h1>Welcome back.</h1>
-        <p>Enter your app password to open your study planner.</p>
+        <div className="login-lock">
+          <ShieldCheck size={24} />
+        </div>
+        <span className="eyebrow">SIGN IN</span>
+        <h1>Enter your password</h1>
+        <p>Use the app password you created during setup.</p>
         {error && <FormError>{error}</FormError>}
         <form onSubmit={submit}>
           <div className="field-group">
@@ -497,11 +517,17 @@ function LoginScreen({
             />
           </div>
           <button className="button button-primary button-wide" disabled={busy}>
-            {busy ? <LoaderCircle className="spin" size={17} /> : <ArrowRight size={17} />}
+            {busy ? (
+              <LoaderCircle className="spin" size={17} />
+            ) : (
+              <ArrowRight size={17} />
+            )}
             {busy ? "Unlocking…" : "Unlock planner"}
           </button>
         </form>
-        <span className="login-foot"><ShieldCheck size={14} /> This browser is remembered for 180 days.</span>
+        <span className="login-foot">
+          <ShieldCheck size={14} /> This browser is remembered for 180 days.
+        </span>
       </div>
     </div>
   );
@@ -510,24 +536,30 @@ function LoginScreen({
 function Sidebar({
   activeView,
   onNavigate,
-  onLogout
+  onLogout,
 }: {
   activeView: ViewName;
   onNavigate: (view: ViewName) => void;
   onLogout: () => void;
 }) {
-  const links: { view: ViewName; label: string; icon: typeof LayoutDashboard }[] = [
+  const links: {
+    view: ViewName;
+    label: string;
+    icon: typeof LayoutDashboard;
+  }[] = [
     { view: "overview", label: "Overview", icon: LayoutDashboard },
     { view: "courses", label: "My courses", icon: BookOpen },
-    { view: "settings", label: "Settings", icon: Settings2 }
+    { view: "settings", label: "Settings", icon: Settings2 },
   ];
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="brand-mark"><GraduationCap size={21} /></div>
-        <span>Dublin Planner</span>
+        <div className="brand-mark">
+          <GraduationCap size={21} />
+        </div>
+        <span>Schoology Planner</span>
       </div>
-      <div className="sidebar-label">YOUR SPACE</div>
+      <div className="sidebar-label">MENU</div>
       <nav className="side-nav" aria-label="Main navigation">
         {links.map(({ view, label, icon: Icon }) => (
           <button
@@ -543,9 +575,11 @@ function Sidebar({
       </nav>
       <div className="sidebar-spacer" />
       <div className="sidebar-tip">
-        <div className="tip-icon"><Sparkles size={16} /></div>
-        <strong>One thing at a time.</strong>
-        <p>Small, steady steps add up to big progress.</p>
+        <div className="tip-icon">
+          <Sparkles size={16} />
+        </div>
+        <strong>Effort ratings</strong>
+        <p>Each task gets a 1–10 estimate based on its course details.</p>
       </div>
       <button className="nav-link logout-link" onClick={onLogout}>
         <LogOut size={18} strokeWidth={1.8} />
@@ -569,7 +603,7 @@ function Overview({
   syncProgress,
   onSync,
   onToggle,
-  onBrowseCourses
+  onBrowseCourses,
 }: {
   dashboard: DashboardData;
   syncing: boolean;
@@ -581,9 +615,13 @@ function Overview({
   const allItems = useMemo(
     () =>
       dashboard.courses.flatMap((course) =>
-        course.checklist.map((item) => ({ ...item, courseId: course.id, courseTitle: course.title }))
+        course.checklist.map((item) => ({
+          ...item,
+          courseId: course.id,
+          courseTitle: course.title,
+        })),
       ),
-    [dashboard.courses]
+    [dashboard.courses],
   );
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -598,25 +636,42 @@ function Overview({
     .sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""));
   const completed = allItems.filter((item) => item.completed).length;
   const totalEffort = upcoming.reduce((sum, item) => sum + item.effort, 0);
-  const greeting = timeGreeting();
-
   return (
     <>
       <div className="welcome-row">
         <div>
-          <div className="date-eyebrow"><CalendarDays size={14} /> {formattedToday()}</div>
-          <h1>{greeting}, you’ve got this<span className="heading-period">.</span></h1>
-          <p className="page-subtitle">Here’s a little clarity on what’s ahead.</p>
+          <div className="date-eyebrow">
+            <CalendarDays size={14} /> {formattedToday()}
+          </div>
+          <h1>Assignments and due dates</h1>
+          <p className="page-subtitle">
+            Tasks from your Schoology courses, sorted by due date.
+          </p>
         </div>
-        <button className="button button-primary sync-button" onClick={onSync} disabled={syncing}>
-          {syncing ? <LoaderCircle className="spin" size={16} /> : <RefreshCw size={16} />}
-          {syncing ? "Reading your courses…" : dashboard.syncedAt ? "Sync Schoology" : "Connect Schoology"}
+        <button
+          className="button button-primary sync-button"
+          onClick={onSync}
+          disabled={syncing}
+        >
+          {syncing ? (
+            <LoaderCircle className="spin" size={16} />
+          ) : (
+            <RefreshCw size={16} />
+          )}
+          {syncing
+            ? "Syncing courses…"
+            : dashboard.syncedAt
+              ? "Sync Schoology"
+              : "Connect Schoology"}
         </button>
       </div>
       {syncing && (
         <div className="sync-progress">
           <div className="sync-progress-bar" />
-          <span>{syncProgress?.message ?? "Gathering course details and finding the dates that matter."}</span>
+          <span>
+            {syncProgress?.message ??
+              "Loading Schoology courses and course materials."}
+          </span>
         </div>
       )}
       <div className="stats-grid">
@@ -624,35 +679,43 @@ function Overview({
           icon={<BookOpen size={19} />}
           label="Active courses"
           value={dashboard.courses.length.toString()}
-          note={dashboard.courses.length ? "Ready to explore" : "Sync to get started"}
+          note={
+            dashboard.courses.length
+              ? "From your Schoology sections"
+              : "Sync Schoology to load courses"
+          }
           tone="green"
         />
         <StatCard
           icon={<CalendarDays size={19} />}
           label="Due this week"
           value={upcoming.length.toString()}
-          note={upcoming.length ? "A good week to plan ahead" : "Your week looks clear"}
+          note={
+            upcoming.length
+              ? "Due in the next 7 days"
+              : "None due in the next 7 days"
+          }
           tone="yellow"
         />
         <StatCard
           icon={<Clock3 size={19} />}
-          label="Effort this week"
+          label="Effort points"
           value={`${totalEffort}`}
-          note="Estimated effort points · out of 10 each"
+          note="For tasks due in the next 7 days"
           tone="lavender"
         />
         <StatCard
           icon={<CheckCircle2 size={19} />}
-          label="Already done"
+          label="Completed tasks"
           value={completed.toString()}
-          note="Checked off your list"
+          note="Across all course checklists"
           tone="peach"
         />
       </div>
       <div className="section-heading">
         <div>
-          <span className="eyebrow">YOUR NEXT STEPS</span>
-          <h2>Coming up</h2>
+          <span className="eyebrow">DUE IN THE NEXT 7 DAYS</span>
+          <h2>Upcoming tasks</h2>
         </div>
         <button className="text-button" onClick={onBrowseCourses}>
           See all courses <ArrowRight size={15} />
@@ -666,24 +729,32 @@ function Overview({
                 key={`${item.courseId}-${item.id}`}
                 item={item}
                 courseTitle={item.courseTitle}
-                onToggle={(checked) => onToggle(item.courseId, item.id, checked)}
+                onToggle={(checked) =>
+                  onToggle(item.courseId, item.id, checked)
+                }
               />
             ))}
           </div>
           <div className="week-card">
             <div className="week-card-top">
-              <div className="week-icon"><ArrowDownRight size={19} /></div>
+              <div className="week-icon">
+                <ArrowDownRight size={19} />
+              </div>
               <span>This week</span>
             </div>
-            <h3>A plan that<br />feels doable.</h3>
+            <h3>Total effort</h3>
             <p>
               {totalEffort > 0
-                ? `${totalEffort} effort points across ${new Set(upcoming.map((item) => item.courseId)).size} courses. Start with one small task.`
-                : "Your next steps are all in one place. Pick one and get started."}
+                ? `${totalEffort} total effort points across ${new Set(upcoming.map((item) => item.courseId)).size} courses.`
+                : "No rated tasks due in the next 7 days."}
             </p>
             <div className="week-progress">
               <div className="week-progress-track">
-                <span style={{ width: `${upcoming.length ? Math.max(6, (completed / (completed + upcoming.length)) * 100) : 0}%` }} />
+                <span
+                  style={{
+                    width: `${upcoming.length ? Math.max(6, (completed / (completed + upcoming.length)) * 100) : 0}%`,
+                  }}
+                />
               </div>
               <span>{completed} completed</span>
             </div>
@@ -693,16 +764,24 @@ function Overview({
       ) : (
         <EmptyState
           icon={<CalendarDays size={22} />}
-          title={dashboard.syncedAt ? "Nothing due in the next 7 days" : "Your plan starts here"}
+          title={
+            dashboard.syncedAt
+                ? "No tasks due in the next 7 days"
+                : "No courses loaded"
+          }
           description={
             dashboard.syncedAt
-              ? "You’re all caught up for now. Check your courses for later dates."
-              : "Sync your Schoology courses and we’ll gather assignments, course materials, and upcoming dates."
+              ? "There are no checklist items due in the next 7 days."
+              : "Sync Schoology to load your courses, assignments, and calendar events."
           }
           action={
             !dashboard.syncedAt ? (
-              <button className="button button-primary" onClick={onSync} disabled={syncing}>
-                <RefreshCw size={15} /> Sync my courses
+              <button
+                className="button button-primary"
+                onClick={onSync}
+                disabled={syncing}
+              >
+                <RefreshCw size={15} /> Sync Schoology
               </button>
             ) : undefined
           }
@@ -710,7 +789,11 @@ function Overview({
       )}
       {dashboard.syncedAt && (
         <div className="last-synced">
-          <span className="sync-dot" /> Last synced {new Date(dashboard.syncedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+          <span className="sync-dot" /> Last synced{" "}
+          {new Date(dashboard.syncedAt).toLocaleString([], {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
         </div>
       )}
     </>
@@ -722,7 +805,7 @@ function StatCard({
   label,
   value,
   note,
-  tone
+  tone,
 }: {
   icon: ReactNode;
   label: string;
@@ -742,25 +825,29 @@ function StatCard({
 
 function CoursesPage({
   dashboard,
-  onToggle
+  onToggle,
 }: {
   dashboard: DashboardData;
   onToggle: (courseId: string, itemId: string, completed: boolean) => void;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selectedCourse = dashboard.courses.find((course) => course.id === selectedId);
+  const selectedCourse = dashboard.courses.find(
+    (course) => course.id === selectedId,
+  );
   return (
     <>
       <div className="page-title-block">
-        <span className="eyebrow">ALL IN ONE PLACE</span>
+        <span className="eyebrow">COURSE LIST</span>
         <h1>Your courses</h1>
-        <p className="page-subtitle">A clear view of what each class has coming up.</p>
+        <p className="page-subtitle">
+          Assignments, calendar events, and course-material dates.
+        </p>
       </div>
       {!dashboard.courses.length ? (
         <EmptyState
           icon={<BookOpen size={22} />}
-          title="Your courses will show up here"
-          description="Head to Overview and sync Schoology to bring your classes and coursework into your planner."
+          title="No courses loaded"
+          description="Go to Overview and sync Schoology to load your courses and assignments."
         />
       ) : selectedCourse ? (
         <CourseDetail
@@ -771,7 +858,9 @@ function CoursesPage({
       ) : (
         <div className="courses-grid">
           {dashboard.courses.map((course, index) => {
-            const openItems = course.checklist.filter((item) => !item.completed);
+            const openItems = course.checklist.filter(
+              (item) => !item.completed,
+            );
             return (
               <button
                 className="course-card"
@@ -779,8 +868,13 @@ function CoursesPage({
                 onClick={() => setSelectedId(course.id)}
               >
                 <div className={`course-card-art art-${index % 4}`}>
-                  <div className="course-art-icon"><BookOpen size={20} /></div>
-                  <span>{course.courseCode || `COURSE ${String(index + 1).padStart(2, "0")}`}</span>
+                  <div className="course-art-icon">
+                    <BookOpen size={20} />
+                  </div>
+                  <span>
+                    {course.courseCode ||
+                      `COURSE ${String(index + 1).padStart(2, "0")}`}
+                  </span>
                   <div className="course-art-orb" />
                 </div>
                 <div className="course-card-body">
@@ -788,10 +882,19 @@ function CoursesPage({
                     <h3>{course.title}</h3>
                     <ChevronRight size={17} />
                   </div>
-                  <p>{course.syllabus || "Syllabus details will appear here after analysis."}</p>
+                  <p>
+                    {course.syllabus ||
+                      "No syllabus summary found. Sync again after syllabus content is available."}
+                  </p>
                   <div className="course-card-footer">
-                    <span><ListIcon /> {openItems.length} upcoming {openItems.length === 1 ? "item" : "items"}</span>
-                    <span>{course.checklist.filter((item) => item.completed).length} done</span>
+                    <span>
+                      <ListIcon /> {openItems.length} upcoming{" "}
+                      {openItems.length === 1 ? "item" : "items"}
+                    </span>
+                    <span>
+                      {course.checklist.filter((item) => item.completed).length}{" "}
+                      done
+                    </span>
                   </div>
                 </div>
               </button>
@@ -806,23 +909,28 @@ function CoursesPage({
 function CourseDetail({
   course,
   onBack,
-  onToggle
+  onToggle,
 }: {
   course: Course;
   onBack: () => void;
   onToggle: (courseId: string, itemId: string, completed: boolean) => void;
 }) {
   const sortedItems = [...course.checklist].sort((a, b) => {
-    if (a.completed !== b.completed) return Number(a.completed) - Number(b.completed);
+    if (a.completed !== b.completed)
+      return Number(a.completed) - Number(b.completed);
     if (!a.dueDate) return b.dueDate ? 1 : a.title.localeCompare(b.title);
     if (!b.dueDate) return -1;
     return a.dueDate.localeCompare(b.dueDate);
   });
   return (
     <div className="course-detail">
-      <button className="back-button" onClick={onBack}>← All courses</button>
+      <button className="back-button" onClick={onBack}>
+        ← All courses
+      </button>
       <div className="detail-title">
-        <div className="detail-icon"><BookOpen size={22} /></div>
+        <div className="detail-icon">
+          <BookOpen size={22} />
+        </div>
         <div>
           <span className="eyebrow">{course.courseCode || "COURSE"}</span>
           <h2>{course.title}</h2>
@@ -831,7 +939,10 @@ function CourseDetail({
       <div className="detail-columns">
         <section className="detail-main">
           <div className="detail-section-title">
-            <div><span className="eyebrow">YOUR CHECKLIST</span><h3>Upcoming work</h3></div>
+            <div>
+              <span className="eyebrow">ASSIGNMENTS AND EVENTS</span>
+              <h3>Course checklist</h3>
+            </div>
             <span className="item-count">{course.checklist.length} items</span>
           </div>
           {sortedItems.length ? (
@@ -848,21 +959,34 @@ function CourseDetail({
           ) : (
             <EmptyState
               icon={<CheckCircle2 size={21} />}
-              title="No upcoming items yet"
-              description="A fresh sync will check this course for assignments and dates."
+              title="No checklist items found"
+              description="Sync Schoology again to check this course for assignments and calendar events."
             />
           )}
         </section>
         <aside className="syllabus-card">
           <div className="syllabus-heading">
-            <div className="syllabus-icon"><Sparkles size={17} /></div>
-            <div><span className="eyebrow">COURSE NOTES</span><h3>Syllabus snapshot</h3></div>
+            <div className="syllabus-icon">
+              <Sparkles size={17} />
+            </div>
+            <div>
+              <span className="eyebrow">SYLLABUS</span>
+              <h3>Summary</h3>
+            </div>
           </div>
-          <p>{course.syllabus || "No syllabus found yet. Try syncing again after your teacher adds course materials."}</p>
+          <p>
+            {course.syllabus ||
+              "No syllabus summary found. Sync again after syllabus content is available."}
+          </p>
           {course.syllabusSource && (
-            <div className="syllabus-source"><span /> Found in {course.syllabusSource}</div>
+            <div className="syllabus-source">
+              <span /> Found in {course.syllabusSource}
+            </div>
           )}
-          <div className="syllabus-note">AI-generated summary. Check the original course materials for complete details.</div>
+          <div className="syllabus-note">
+            AI-generated summary. Refer to the original material for full
+            course requirements.
+          </div>
         </aside>
       </div>
     </div>
@@ -872,7 +996,7 @@ function CourseDetail({
 function TaskRow({
   item,
   courseTitle,
-  onToggle
+  onToggle,
 }: {
   item: ChecklistItem;
   courseTitle: string;
@@ -883,7 +1007,11 @@ function TaskRow({
       <button
         className="task-check"
         onClick={() => onToggle(!item.completed)}
-        aria-label={item.completed ? `Mark ${item.title} incomplete` : `Mark ${item.title} complete`}
+        aria-label={
+          item.completed
+            ? `Mark ${item.title} incomplete`
+            : `Mark ${item.title} complete`
+        }
       >
         {item.completed ? <CheckCircle2 size={19} /> : <Circle size={19} />}
       </button>
@@ -893,7 +1021,12 @@ function TaskRow({
           <span className="task-course">{courseTitle}</span>
           <span className="meta-separator">·</span>
           <span>{item.source}</span>
-          {item.details && <><span className="meta-separator">·</span><span className="task-detail">{item.details}</span></>}
+          {item.details && (
+            <>
+              <span className="meta-separator">·</span>
+              <span className="task-detail">{item.details}</span>
+            </>
+          )}
         </div>
       </div>
       <div className="task-right">
@@ -910,7 +1043,7 @@ function TaskRow({
 
 function SettingsPage({
   onError,
-  onSaved
+  onSaved,
 }: {
   onError: (message: string) => void;
   onSaved: () => void;
@@ -924,7 +1057,7 @@ function SettingsPage({
     openAiKey: "",
     currentPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -957,8 +1090,8 @@ function SettingsPage({
           schoologySecret: form.schoologySecret || undefined,
           openAiKey: form.openAiKey || undefined,
           currentPassword: form.currentPassword || undefined,
-          newPassword: form.newPassword || undefined
-        })
+          newPassword: form.newPassword || undefined,
+        }),
       });
       setForm({
         schoologyKey: "",
@@ -966,7 +1099,7 @@ function SettingsPage({
         openAiKey: "",
         currentPassword: "",
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
       });
       onSaved();
       setSaved(true);
@@ -980,15 +1113,22 @@ function SettingsPage({
   return (
     <>
       <div className="page-title-block">
-        <span className="eyebrow">YOUR PREFERENCES</span>
+        <span className="eyebrow">ACCOUNT</span>
         <h1>Settings</h1>
-        <p className="page-subtitle">Manage the keys and password that keep your planner yours.</p>
+        <p className="page-subtitle">
+          Update your Schoology and OpenAI keys or change your app password.
+        </p>
       </div>
       <form className="settings-form" onSubmit={submit}>
         <section className="settings-card">
           <div className="settings-card-heading">
-            <div className="settings-icon green"><BookOpen size={18} /></div>
-            <div><h2>Schoology connection</h2><p>Update your API consumer credentials.</p></div>
+            <div className="settings-icon green">
+              <BookOpen size={18} />
+            </div>
+            <div>
+              <h2>Schoology connection</h2>
+              <p>Update your API consumer credentials.</p>
+            </div>
             <StatusBadge configured={settings?.schoologyConfigured ?? false} />
           </div>
           <div className="settings-fields">
@@ -998,7 +1138,9 @@ function SettingsPage({
                 id="settings-schoology-key"
                 autoComplete="off"
                 value={form.schoologyKey}
-                onChange={(event) => setForm({ ...form, schoologyKey: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, schoologyKey: event.target.value })
+                }
                 placeholder="Leave blank to keep your current key"
               />
             </div>
@@ -1009,10 +1151,17 @@ function SettingsPage({
                 type="password"
                 autoComplete="new-password"
                 value={form.schoologySecret}
-                onChange={(event) => setForm({ ...form, schoologySecret: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, schoologySecret: event.target.value })
+                }
                 placeholder="Leave blank to keep your current secret"
               />
-              <a className="field-hint field-link" href="https://dublin.schoology.com/api" target="_blank" rel="noreferrer">
+              <a
+                className="field-hint field-link"
+                href="https://Schoology.schoology.com/api"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Manage keys at Schoology <ExternalLink size={12} />
               </a>
             </div>
@@ -1020,8 +1169,13 @@ function SettingsPage({
         </section>
         <section className="settings-card">
           <div className="settings-card-heading">
-            <div className="settings-icon lavender"><Sparkles size={18} /></div>
-            <div><h2>Course analysis</h2><p>Used to find deadlines and estimate assignment effort.</p></div>
+            <div className="settings-icon lavender">
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <h2>Course analysis</h2>
+              <p>Used to find dates in course materials and estimate task effort.</p>
+            </div>
             <StatusBadge configured={settings?.openAiConfigured ?? false} />
           </div>
           <div className="settings-fields single-field">
@@ -1032,17 +1186,26 @@ function SettingsPage({
                 type="password"
                 autoComplete="new-password"
                 value={form.openAiKey}
-                onChange={(event) => setForm({ ...form, openAiKey: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, openAiKey: event.target.value })
+                }
                 placeholder="Leave blank to keep your current key"
               />
-              <span className="field-hint">Current analysis model: {settings?.model ?? "Loading…"}</span>
+              <span className="field-hint">
+                Current analysis model: {settings?.model ?? "Loading…"}
+              </span>
             </div>
           </div>
         </section>
         <section className="settings-card">
           <div className="settings-card-heading">
-            <div className="settings-icon peach"><ShieldCheck size={18} /></div>
-            <div><h2>App password</h2><p>Change the password used to unlock this planner.</p></div>
+            <div className="settings-icon peach">
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <h2>App password</h2>
+              <p>Change the password used to unlock this planner.</p>
+            </div>
           </div>
           <div className="settings-fields">
             <div className="field-group">
@@ -1052,7 +1215,9 @@ function SettingsPage({
                 type="password"
                 autoComplete="current-password"
                 value={form.currentPassword}
-                onChange={(event) => setForm({ ...form, currentPassword: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, currentPassword: event.target.value })
+                }
                 placeholder="Required to set a new password"
               />
             </div>
@@ -1064,7 +1229,9 @@ function SettingsPage({
                 autoComplete="new-password"
                 minLength={8}
                 value={form.newPassword}
-                onChange={(event) => setForm({ ...form, newPassword: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, newPassword: event.target.value })
+                }
                 placeholder="At least 8 characters"
               />
             </div>
@@ -1076,20 +1243,33 @@ function SettingsPage({
                 autoComplete="new-password"
                 minLength={8}
                 value={form.confirmPassword}
-                onChange={(event) => setForm({ ...form, confirmPassword: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, confirmPassword: event.target.value })
+                }
                 placeholder="Enter your new password again"
               />
             </div>
           </div>
         </section>
         <div className="settings-actions">
-          {saved && <span className="saved-message"><Check size={15} /> Changes saved securely</span>}
+          {saved && (
+            <span className="saved-message">
+              <Check size={15} /> Changes saved
+            </span>
+          )}
           <button className="button button-primary" disabled={busy}>
-            {busy ? <LoaderCircle className="spin" size={16} /> : <Check size={16} />}
+            {busy ? (
+              <LoaderCircle className="spin" size={16} />
+            ) : (
+              <Check size={16} />
+            )}
             {busy ? "Saving…" : "Save changes"}
           </button>
         </div>
-        <p className="settings-footnote"><ShieldCheck size={14} /> API keys are encrypted on the server and never shown after saving.</p>
+        <p className="settings-footnote">
+          <ShieldCheck size={14} /> API keys are encrypted on the server and
+          never shown after saving.
+        </p>
       </form>
     </>
   );
@@ -1107,7 +1287,7 @@ function EmptyState({
   icon,
   title,
   description,
-  action
+  action,
 }: {
   icon: ReactNode;
   title: string;
@@ -1125,7 +1305,11 @@ function EmptyState({
 }
 
 function FormError({ children }: { children: ReactNode }) {
-  return <div className="form-error"><AlertCircle size={15} /> {children}</div>;
+  return (
+    <div className="form-error">
+      <AlertCircle size={15} /> {children}
+    </div>
+  );
 }
 
 function ListIcon() {
@@ -1133,22 +1317,17 @@ function ListIcon() {
 }
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Something went wrong. Please try again.";
+  return error instanceof Error
+    ? error.message
+    : "Something went wrong. Please try again.";
 }
 
 function formattedToday(): string {
   return new Date().toLocaleDateString([], {
     weekday: "long",
     month: "long",
-    day: "numeric"
+    day: "numeric",
   });
-}
-
-function timeGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
 }
 
 function dueLabel(dateValue: string): string {
