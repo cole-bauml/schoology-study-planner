@@ -9,7 +9,10 @@ const responseSchema = z.object({
       sourceId: z.string(),
       title: z.string().min(1),
       dueDate: z.string().nullable(),
-      effort: z.number().int().min(1).max(10),
+      effort: z
+        .number()
+        .int()
+        .transform((effort) => Math.max(1, Math.min(10, effort))),
       details: z.string().default(""),
       dueEvidence: z.string().default("")
     })
